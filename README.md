@@ -1,4 +1,4 @@
-# Thermostat Digital — Proiect de Verificare
+# Thermostat Digital - Proiect de Verificare
 
 Proiect de verificare pentru un termostat digital implementat in Verilog, realizat in cadrul cursului SECI-SI la Universitatea Transilvania din Brasov.
 
