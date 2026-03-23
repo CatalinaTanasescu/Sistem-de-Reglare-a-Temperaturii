@@ -26,5 +26,3 @@ Testele acopera functionarea normala, cazurile de forta majora (force_heat/cool)
 
 ---
 
-Cordonas Cristian · Tanasescu Stefania-Catalina · Paruraru Alex Marius  
-Coordonator: Alexandru Dinu
