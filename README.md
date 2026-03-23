@@ -22,7 +22,7 @@ Modulul primeste temperatura curenta de la un senzor si porneste incalzirea sau 
 
 ## Verificare
 
-Testele acopera functionarea normala, cazurile de forta majora (force_heat/cool), reset si scenarii random. SVA assertions verifica ca cele doua iesiri nu sunt active simultan si ca reset-ul e imediat.
+Testele acopera functionarea normala, cazurile de forta majora (force_heat/cool), reset si scenarii random. SVA verifica ca cele doua iesiri nu sunt active simultan si ca reset-ul e imediat.
 
 ---
 
