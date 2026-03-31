@@ -25,6 +25,12 @@ class coverage_apb extends uvm_component;
             bins max_val = {32'hFFFF_FFFF};
         }
 
+        DELAY: coverpoint item.delay {
+            bins no_delay   = {0};
+            bins short_wait = {[1:4]};
+            bins long_wait  = {[5:$]};
+        }
+
         cx_addr_rw: cross ADDR, RW_TYPE;
 
     endgroup : cg_apb_item
@@ -37,8 +43,8 @@ class coverage_apb extends uvm_component;
 
     virtual function void write_apb(tranzactie_apb t);
         cg_apb_item.sample(t);
-        `uvm_info("COV", $sformatf("Sampled: Addr=%0h, Write=%0b. Coverage curent: %0.2f%%", 
-                  t.addr, t.write, cg_apb_item.get_inst_coverage()), UVM_LOW)
+        `uvm_info("COV", $sformatf("Sampled: Delay=%0d, Addr=%0h, Data=%0h, Write=%0b, Coverage curent: %0.2f%%", 
+                  t.delay, t.addr, t.data, t.write, cg_apb_item.get_inst_coverage()), UVM_LOW)
     endfunction : write_apb
 
 endclass : coverage_apb

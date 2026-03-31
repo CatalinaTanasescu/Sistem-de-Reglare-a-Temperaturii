@@ -29,7 +29,8 @@ class driver_agent_apb extends uvm_driver #(tranzactie_apb);
   endtask
 
   task send_transaction(tranzactie_apb req);
-    
+    repeat(req.delay) @(`APB_DRV_CB);
+
     wait(apb_vif.rst_n === 1'b1);
 
     @(`APB_DRV_CB);
@@ -43,21 +44,14 @@ class driver_agent_apb extends uvm_driver #(tranzactie_apb);
 
     @(`APB_DRV_CB);
     `APB_DRV_CB.penable <= 1'b1;
-
+    
     do 
       @(`APB_DRV_CB);
     while (`APB_DRV_CB.pready !== 1'b1);
 
-    // max in monitor
-    if (!req.write)
-      req.data = `APB_DRV_CB.prdata;
-
-
     `APB_DRV_CB.psel    <= 1'b0;
     `APB_DRV_CB.penable <= 1'b0;
     
-    // pun si delay si tipul de transfer (poate fara tip)
-
   endtask
 
 endclass : driver_agent_apb

@@ -5,8 +5,9 @@ class monitor_apb extends uvm_monitor;
   `uvm_component_utils(monitor_apb)
 
   virtual apb_interface_dut apb_vif;
-  
   uvm_analysis_port #(tranzactie_apb) item_collected_port;
+
+  int idle_count = 0;
 
   function new(string name = "monitor_apb", uvm_component parent = null);
     super.new(name, parent);
@@ -29,25 +30,31 @@ class monitor_apb extends uvm_monitor;
   task collect_transaction();
     tranzactie_apb tr;
 
-    @(posedge apb_vif.pclk);
+    @(`APB_MON_CB);
     
-    if (`APB_MON_CB.psel === 1'b1 && `APB_MON_CB.penable === 1'b1 && `APB_MON_CB.pready === 1'b1) begin
+    if (`APB_MON_CB.psel === 1'b0)
+      idle_count++;
+    else if (`APB_MON_CB.psel === 1'b1 && `APB_MON_CB.penable === 1'b1 && `APB_MON_CB.pready === 1'b1) begin
 
       tr = tranzactie_apb::type_id::create("tr");
+      
       tr.addr  = `APB_MON_CB.paddr;
       tr.write = `APB_MON_CB.pwrite;
+      tr.delay = idle_count; 
       
-      if (tr.write) begin
+      if (tr.write) 
         tr.data = `APB_MON_CB.pwdata; 
-      end else begin
+      else 
         tr.data = `APB_MON_CB.prdata; 
-      end
 
       item_collected_port.write(tr);
+      idle_count = 0; 
       
-      `uvm_info("MON", $sformatf("Transfer APB detectat: Addr=%0h, Data=%0h, Write=%0b", tr.addr, tr.data, tr.write), UVM_HIGH)
+
+      `uvm_info("MON", $sformatf("Transfer APB detectat: Addr=%0h | Data=%0h | Write=%0b | Delay_IDLE=%0d", 
+                                  tr.addr, tr.data, tr.write, tr.delay), UVM_HIGH)  
+                                    
     end
   endtask
 
 endclass
-
