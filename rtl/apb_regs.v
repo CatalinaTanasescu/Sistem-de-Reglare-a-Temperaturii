@@ -1,12 +1,12 @@
-// Module: apb_submodule
+// Module: apb_regs
 // Description: This module implements an APB slave interface. 
 //              Its role is to allow a master to configure the system registers 
 //              (target temperature, tolerance, manual control) 
 //              and read their current values.
-module apb_submodule #(
+module apb_regs #(
   // Parameters
   parameter DATA_WIDTH = 8 // Width of the data bus and registers
-)(
+) (
   // Standard APB Interface
   input pclk,                                 // APB bus clock
   input preset_n,                             // Asynchronous APB reset (active low)
@@ -28,6 +28,7 @@ module apb_submodule #(
 always @(posedge pclk or negedge preset_n)
   if (~preset_n)
     pslverr <= 1'b0;
+  // Pulse condition
   else if (pslverr == 1)
     pslverr <= 0;
   // Assert error if the address is greater than 2 (valid addresses are 0, 1, 2)
@@ -75,4 +76,4 @@ always @(posedge pclk or negedge preset_n)
       default: ;  // Ignore writes to invalid addresses
     endcase
 
-endmodule //apb_submodule
+endmodule //apb_regs

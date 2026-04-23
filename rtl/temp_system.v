@@ -1,10 +1,14 @@
 // Module: temp_system (Top-Level)
-// Description: This is the top-level module that instantiates and connects 
-//              the two submodules. It exposes only the necessary external pins: 
-//              the APB bus for communication, and the sensor/actuator pins.
+// Description: This is the top-level module that instantiates and 
+//              connects all the submodules: the APB interface, the thermal 
+//              controller, and the physical sensor simulator. 
+//              It exposes the APB bus for communication and provides 
+//              visibility to the internal sensor/actuator states.
 module temp_system #(
   // Parameters 
-  parameter DATA_WIDTH = 8 // Data width
+  parameter DATA_WIDTH = 8,     // Data width
+  parameter UPDATE_CYCLES = 10, // Cycles between sensor updates
+  parameter AMBIENT_TEMP = 22   // Default environmental temperature
 ) (
   // Global signals
   input clk,                        // System clock
@@ -19,8 +23,8 @@ module temp_system #(
   output pready,                    // System confirms APB access completion
   output pslverr,                   // System reports an APB error
   // Temperature Interace
-  input [DATA_WIDTH-1:0] temp_now,  // Temperature value read from sensor
-  input temp_valid,                 // Valid flag for temp_now data    
+  output [DATA_WIDTH-1:0] temp_now, // Temperature value read from sensor
+  output temp_valid,                // Valid flag for temp_now data    
   output heater_on,                 // Command pin to the heater
   output cooler_on                  // Command pin to the cooler
 );
@@ -28,10 +32,12 @@ module temp_system #(
 // Internal connection wires
 wire [DATA_WIDTH-1:0] target_temp; // The desired target temperature
 wire [DATA_WIDTH-1:0] temp_tolerance; // The configured tolerance
-wire [DATA_WIDTH-1:0] control_reg; // Special commands (disable, force)
+wire [DATA_WIDTH-1:0] control_reg; // Special commands (disable, force heat/cool)
 
 // Instantiation of the APB slave module
-apb_submodule apb_inst(
+apb_regs #(
+  .DATA_WIDTH (DATA_WIDTH)
+) apb_inst(
   .pclk (clk),
   .preset_n (rst_n),
   .paddr (paddr),
@@ -48,7 +54,9 @@ apb_submodule apb_inst(
 );
 
 // Instantiation of the thermal control module
-temp_submodule temp_inst(
+temp_controller #(
+  .DATA_WIDTH (DATA_WIDTH)
+) temp_ctrl_inst(
   .clk (clk),
   .rst_n (rst_n),
   .temp_now (temp_now),
@@ -58,6 +66,20 @@ temp_submodule temp_inst(
   .target_temp (target_temp),
   .temp_tolerance (temp_tolerance),
   .control_reg (control_reg)
+);
+
+// Instantiation of the simulated environment and digital sensor
+temp_sensor #(
+  .DATA_WIDTH (DATA_WIDTH),
+  .UPDATE_CYCLES (UPDATE_CYCLES),
+  .AMBIENT_TEMP (AMBIENT_TEMP)
+) temp_sensor_inst(
+  .clk (clk),
+  .rst_n (rst_n),
+  .heater_on (heater_on),
+  .cooler_on (cooler_on),
+  .temp_valid (temp_valid),
+  .temp_now (temp_now)
 );
 
 endmodule //temp_system

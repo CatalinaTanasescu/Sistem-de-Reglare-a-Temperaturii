@@ -1,12 +1,12 @@
-// Module: temp_submodule
+// Module: temp_controller
 // Description: This module is the decision-making core of the thermal system. 
 //              It takes the configuration values from the APB registers and 
 //              sensor data to automatically determine if the heater 
 //              or cooler should be activated.
-module temp_submodule #(
+module temp_controller #(
   // Parameters
   parameter DATA_WIDTH = 8 // Data width for temperature and settings
-)(
+) (
   // System interface
   input clk,                              // Internal clock for sequential logic
   input rst_n,                            // Asynchronous reset (active low)
@@ -81,4 +81,4 @@ always @(posedge clk or negedge rst_n)
     else
       cooler_on <= 1'b0; // Not hot anymore, turn it off
 
-endmodule // temp_submodule
+endmodule // temp_controller
