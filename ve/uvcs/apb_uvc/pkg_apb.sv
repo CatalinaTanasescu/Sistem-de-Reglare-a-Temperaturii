@@ -5,6 +5,7 @@ package apb_pkg;
 
    `include "tranzactie_apb.sv"
    `include "sequencer_apb.sv"
+   `include "apb_seq_lib.sv"
    `include "driver_agent_apb.sv"
    `include "monitor_apb.sv"
    `include "coverage_apb.sv" 

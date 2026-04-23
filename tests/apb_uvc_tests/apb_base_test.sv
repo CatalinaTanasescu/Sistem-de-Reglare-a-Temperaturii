@@ -20,6 +20,8 @@ class apb_base_test extends uvm_test;
   task run_phase(uvm_phase phase);
     phase.raise_objection(this);
     phase.phase_done.set_drain_time(this, 200ns);
+    @(posedge apb_environment.apb_vif.rst_n);
+    #10ns;
     phase.drop_objection(this);
   endtask : run_phase
 
@@ -33,4 +35,4 @@ class apb_base_test extends uvm_test;
     `uvm_info(get_type_name(), {"Start of simulation for ", get_full_name()}, UVM_HIGH);
   endfunction : start_of_simulation_phase
 
-endclass : spi_base_test
+endclass : apb_base_test

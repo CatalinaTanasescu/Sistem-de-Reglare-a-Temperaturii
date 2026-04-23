@@ -10,7 +10,7 @@ class apb_single_test extends apb_base_test;
     super.build_phase(phase);
     `uvm_info(get_full_name(), "Build phase of apb_single_test started", UVM_LOW)
 
-    uvm_config_wrapper::set(this, "apb_env.v_sequencer.run_phase",
+    uvm_config_wrapper::set(this, "apb_environment.apb_agent.apb_seq.run_phase",
       "default_sequence",
       apb_single_seq::type_id::get());
 
