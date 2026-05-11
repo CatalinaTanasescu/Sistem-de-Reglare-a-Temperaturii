@@ -21,7 +21,7 @@ class apb_base_test extends uvm_test;
     phase.raise_objection(this);
     phase.phase_done.set_drain_time(this, 200ns);
     @(posedge apb_environment.apb_vif.rst_n);
-    #10ns;
+    #200ns;
     phase.drop_objection(this);
   endtask : run_phase
 

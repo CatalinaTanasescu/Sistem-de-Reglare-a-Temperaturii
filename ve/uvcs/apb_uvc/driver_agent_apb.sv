@@ -18,14 +18,21 @@ class driver_agent_apb extends uvm_driver #(tranzactie_apb);
   endfunction
   
   virtual task run_phase(uvm_phase phase);
-    `APB_DRV_CB.psel    <= 0;
-    `APB_DRV_CB.penable <= 0;
+    reset_signals();
 
     forever begin
       seq_item_port.get_next_item(req);
       send_transaction(req);
       seq_item_port.item_done();
     end
+  endtask
+
+  task reset_signals();
+    `APB_DRV_CB.psel    <= 1'b0;
+    `APB_DRV_CB.penable <= 1'b0;
+    `APB_DRV_CB.paddr   <= 3'b0;
+    `APB_DRV_CB.pwrite  <= 1'b0;
+    `APB_DRV_CB.pwdata  <= 32'h0;
   endtask
 
   task send_transaction(tranzactie_apb req);

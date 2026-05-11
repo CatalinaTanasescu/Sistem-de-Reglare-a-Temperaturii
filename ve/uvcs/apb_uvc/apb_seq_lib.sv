@@ -74,7 +74,8 @@ class apb_base_test_seq extends apb_base_seq;
     super.new(name);
   endfunction
 
-  constraint max_iterations_c {soft iterations inside {[10:20]};}
+  //constraint max_iterations_c {soft iterations inside {[10:20]};}
+  constraint max_iterations_c {soft iterations inside {[75:150]};}
 
 endclass : apb_base_test_seq
 

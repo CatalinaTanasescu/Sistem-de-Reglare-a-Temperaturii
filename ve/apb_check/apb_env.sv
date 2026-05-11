@@ -14,8 +14,8 @@ class apb_env extends uvm_env;
 
     if (!uvm_config_db #(virtual apb_interface_dut)::get(this, "", "apb_intf", apb_vif))
       `uvm_fatal(get_type_name(), "Virtual APB interface not passed!")
-    uvm_config_db #(virtual apb_interface_dut)::set(this, "apb_agent", "apb_intf", apb_vif);
-
+    uvm_config_db #(virtual apb_interface_dut)::set(this, "apb_agent*", "apb_intf", apb_vif);
+    
     apb_agent = agent_apb::type_id::create("apb_agent", this);
   endfunction
 
