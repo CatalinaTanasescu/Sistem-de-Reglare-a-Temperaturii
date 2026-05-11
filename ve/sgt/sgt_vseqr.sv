@@ -5,7 +5,7 @@ class sgt_vseqr extends uvm_sequencer;
   `uvm_component_utils(sgt_vseqr)
 
   uvm_sequencer #(tranzactie_apb)  apb_seqr;
-  uvm_sequencer #(tranzactie_temp) temp_seqr;
+  // temp_seqr eliminat — temp_agent este pasiv, nu exista sequencer temp
 
   sgt_env env;
 

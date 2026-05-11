@@ -1,42 +1,37 @@
-class agent_apb extends uvm_agent;
-  
-  `uvm_component_utils(agent_apb)
-  
-  driver_agent_apb    apb_drv;
-  monitor_apb         apb_mon;
-  sequencer_apb       apb_seq; 
-  coverage_apb        apb_cov;
-  
-  uvm_analysis_port #(tranzactie_apb) agent_port_apb;
+// agent_temp — mod PASIV
+// temp_sensor este acum intern in DUT — nu mai conducem temp_now/temp_valid
+// Agentul contine doar monitor si coverage
+// driver si sequencer au fost eliminate complet
 
-  function new(string name = "agent_apb", uvm_component parent = null);
+class agent_temp extends uvm_agent;
+
+  `uvm_component_utils(agent_temp)
+
+  monitor_temp  temp_mon;
+  coverage_temp temp_cov;
+
+  uvm_analysis_port #(tranzactie_temp) agent_port_temp;
+
+  function new(string name = "agent_temp", uvm_component parent = null);
     super.new(name, parent);
-  endfunction 
+  endfunction
 
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    
-    agent_port_apb = new("agent_port_apb", this);
-    apb_mon = monitor_apb::type_id::create("apb_mon", this);
-    
-    if (get_is_active() == UVM_ACTIVE) begin
-      apb_seq = sequencer_apb::type_id::create("apb_seq", this);
-      apb_drv = driver_agent_apb::type_id::create("apb_drv", this);
-    end
 
-    apb_cov = coverage_apb::type_id::create("apb_cov", this);
+    // Agent fortat pasiv — temp_sensor e intern in DUT
+    set_is_active(UVM_PASSIVE);
+
+    agent_port_temp = new("agent_port_temp", this);
+    temp_mon = monitor_temp::type_id::create("temp_mon", this);
+    temp_cov = coverage_temp::type_id::create("temp_cov", this);
   endfunction
-  
+
   virtual function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-  
-    apb_mon.item_collected_port.connect(this.agent_port_apb);
-  
-    if (get_is_active() == UVM_ACTIVE) begin
-      apb_drv.seq_item_port.connect(apb_seq.seq_item_export);
-    end
-    
-    apb_mon.item_collected_port.connect(apb_cov.apb_in);
+
+    temp_mon.item_collected_port.connect(this.agent_port_temp);
+    temp_mon.item_collected_port.connect(temp_cov.temp_in);
   endfunction
-  
+
 endclass

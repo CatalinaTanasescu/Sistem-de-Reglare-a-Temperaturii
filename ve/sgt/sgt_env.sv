@@ -33,6 +33,7 @@ class sgt_env extends uvm_env;
 
     apb_agent   = agent_apb::type_id::create("apb_agent", this);
     temp_agent  = agent_temp::type_id::create("temp_agent", this);
+    temp_agent.is_active = UVM_PASSIVE;
     v_sequencer = sgt_vseqr::type_id::create("v_sequencer", this);
     scoreboard  = sgt_scbd::type_id::create("scoreboard", this);
   endfunction
@@ -40,8 +41,12 @@ class sgt_env extends uvm_env;
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
 
-    v_sequencer.apb_seqr  = apb_agent.apb_seq;
-    v_sequencer.temp_seqr = temp_agent.temp_seq;
+    v_sequencer.apb_seqr = apb_agent.apb_seq;
+
+    // temp_agent este pasiv — temp_seq este null, nu se conecteaza la v_sequencer
+    if (temp_agent.get_is_active() == UVM_ACTIVE) begin
+      v_sequencer.temp_seqr = temp_agent.temp_seq;
+    end
 
     apb_agent.agent_port_apb.connect(scoreboard.apb_mon_port);
     temp_agent.agent_port_temp.connect(scoreboard.temp_mon_port);

@@ -1,9 +1,4 @@
-class sequencer_temp extends uvm_sequencer #(tranzactie_temp);
-
-  `uvm_component_utils(sequencer_temp)
-
-  function new(string name = "sequencer_temp", uvm_component parent = null);
-    super.new(name, parent);
-  endfunction
-
-endclass : sequencer_temp
+// sequencer_temp — ELIMINAT
+// Fisierul este pastrat doar pentru referinta istorica
+// Sequencer-ul nu mai este instantiat — agentul temp este pasiv
+// Nu exista secvente de generat cand temp_sensor e intern in DUT
