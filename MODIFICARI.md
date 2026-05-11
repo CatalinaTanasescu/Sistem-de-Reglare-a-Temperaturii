@@ -22,6 +22,17 @@ Acest document descrie modificările efectuate pentru a transforma Universal Ver
   ```
 - **Motiv**: Când agent-ul este pasiv, `temp_seq` este `null`, așa că conexiunea trebuie să fie condițională pentru a evita erori de runtime.
 
+### 3. Adăugare Asertiuni SystemVerilog (SVA)
+- **Fișiere modificate**: 
+  - `ve/uvcs/apb_uvc/apb_interface_dut.sv`
+  - `ve/uvcs/temp_uvc/temp_interface_dut.sv`
+  - `rtl/temp_controller.v`
+- **Schimbări**:
+  - **APB Protocol**: Adăugate asertiuni complete pentru conformitatea cu specificația AMBA APB (transferuri corecte, stabilitate semnale, completare transferuri, etc.)
+  - **Interfață Temperatură**: Asertiuni pentru validitatea semnalelor și constrângeri de protocol
+  - **Logică Funcțională**: Asertiuni pentru verificarea comportamentului controlerului de temperatură (moduri manuale, automat, interlock-uri de siguranță)
+- **Motiv**: Îmbunătățirea calității verificării prin detectarea automată a erorilor de protocol și funcționale.
+
 ## Impactul Modificărilor
 - **Înainte**: Temp UVC era activ, generând stimuli prin driver și sequencer.
 - **După**: Temp UVC este pasiv, funcționând doar ca monitor pentru a captura și analiza semnalele de temperatură.
@@ -29,12 +40,14 @@ Acest document descrie modificările efectuate pentru a transforma Universal Ver
   - Reduce complexitatea testbench-ului când nu este nevoie de stimuli din partea temp UVC.
   - Permite utilizarea temp UVC doar pentru monitorizare și coverage.
   - Menține compatibilitatea cu codul existent prin utilizarea flag-ului `is_active`.
+  - Adaugă verificare robustă prin asertiuni SVA pentru protocol și funcționalitate.
 
 ## Verificare
 Pentru a verifica modificările:
 1. Compilează proiectul cu un simulator SystemVerilog (ex: ModelSim, QuestaSim).
 2. Rulează un test de bază pentru a confirma că nu există erori de compilare sau runtime.
 3. Verifică log-urile pentru a vedea că temp UVC funcționează în mod pasiv (nu generează stimuli).
+4. Verifică rapoartele de asertiuni pentru a confirma că toate asertiile trec.
 
 ## Data Modificărilor
 - Modificări efectuate la data: 11 Mai 2026
