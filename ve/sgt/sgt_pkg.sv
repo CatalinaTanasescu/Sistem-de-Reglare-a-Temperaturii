@@ -3,8 +3,8 @@ package sgt_pkg;
   import uvm_pkg::*;
   `include "uvm_macros.svh"
 
-  import pkg_apb::*;
-  import pkg_temp::*;
+  import apb_pkg::*;
+  import temp_pkg::*;
 
   `include "sgt_vseqr.sv"
   `include "sgt_vseq_lib.sv"

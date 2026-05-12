@@ -40,8 +40,7 @@ class sgt_env extends uvm_env;
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
 
-    v_sequencer.apb_seqr  = apb_agent.apb_seq;
-    v_sequencer.temp_seqr = temp_agent.temp_seq;
+    v_sequencer.apb_seqr  = apb_agent.apb_seq; 
 
     apb_agent.agent_port_apb.connect(scoreboard.apb_mon_port);
     temp_agent.agent_port_temp.connect(scoreboard.temp_mon_port);

@@ -4,9 +4,7 @@ class sgt_vseqr extends uvm_sequencer;
 
   `uvm_component_utils(sgt_vseqr)
 
-  uvm_sequencer #(tranzactie_apb)  apb_seqr;
-  uvm_sequencer #(tranzactie_temp) temp_seqr;
-
+  uvm_sequencer #(tranzactie_apb) apb_seqr;
   sgt_env env;
 
   function new(string name = "sgt_vseqr", uvm_component parent = null);
