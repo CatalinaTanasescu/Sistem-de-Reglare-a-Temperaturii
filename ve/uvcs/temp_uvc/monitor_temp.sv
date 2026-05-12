@@ -7,8 +7,6 @@ class monitor_temp extends uvm_monitor;
   virtual temp_interface_dut temp_vif;
   uvm_analysis_port #(tranzactie_temp) item_collected_port;
 
-  int idle_count = 0;
-
   function new(string name = "monitor_temp", uvm_component parent = null);
     super.new(name, parent);
     item_collected_port = new("item_collected_port", this);
@@ -32,26 +30,23 @@ class monitor_temp extends uvm_monitor;
 
     @(`TEMP_MON_CB);
 
-    if (`TEMP_MON_CB.temp_valid === 1'b0)
-      idle_count++;
-    else if (`TEMP_MON_CB.temp_valid === 1'b1) begin
-
+    if (`TEMP_MON_CB.temp_valid === 1'b1) begin
       tr = tranzactie_temp::type_id::create("tr");
 
       tr.temp_now   = `TEMP_MON_CB.temp_now;
       tr.temp_valid = `TEMP_MON_CB.temp_valid;
-      tr.delay      = idle_count;
 
       @(`TEMP_MON_CB);
+
       tr.heater_on  = `TEMP_MON_CB.heater_on;
       tr.cooler_on  = `TEMP_MON_CB.cooler_on;
 
       item_collected_port.write(tr);
-      idle_count = 0;
 
-      `uvm_info("TEMP_MON", $sformatf("Transfer TEMP detectat: Temp=%0d | Valid=%0b | Heater=%0b | Cooler=%0b | Delay_IDLE=%0d",
-                                       tr.temp_now, tr.temp_valid, tr.heater_on, tr.cooler_on, tr.delay), UVM_HIGH)
-
+      `uvm_info("TEMP_MON",
+        $sformatf("Transfer TEMP detectat: Temp=%0d | Valid=%0b | Heater=%0b | Cooler=%0b",
+                  tr.temp_now, tr.temp_valid, tr.heater_on, tr.cooler_on),
+        UVM_HIGH)
     end
   endtask
 

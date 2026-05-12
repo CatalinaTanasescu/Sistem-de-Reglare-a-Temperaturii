@@ -1,21 +1,15 @@
 interface temp_interface_dut (input logic clk, input logic rst_n);
+
    logic [7:0] temp_now;
    logic       temp_valid;
    logic       heater_on;
    logic       cooler_on;
 
-   clocking drv_ck @(posedge clk);
-      default input #1ns output #1ns;
-      output temp_now, temp_valid;
-      input  heater_on, cooler_on;
-   endclocking
-
    clocking mon_ck @(posedge clk);
-      default input #1ns output #1ns;
+      default input #1ns;
       input temp_now, temp_valid, heater_on, cooler_on;
    endclocking
 
-   modport driver_mp  (clocking drv_ck, input clk, rst_n);
    modport monitor_mp (clocking mon_ck, input clk, rst_n);
 
    // ------------------------------------------------------------------ //
@@ -61,7 +55,7 @@ interface temp_interface_dut (input logic clk, input logic rst_n);
    // heater and cooler should not be on at the same time
    property no_simultaneous_heat_cool;
       @(posedge clk) disable iff(rst_n === 1'b0)
-         not (heater_on && cooler_on);
+         !(heater_on && cooler_on);
    endproperty
 
    // after reset, both outputs must be 0
