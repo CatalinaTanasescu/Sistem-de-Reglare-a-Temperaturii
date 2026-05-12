@@ -4,13 +4,15 @@ module sgt_tb;
 
   import uvm_pkg::*;
   `include "uvm_macros.svh"
-  import pkg_apb::*;
-  import pkg_temp::*;
+  import apb_pkg::*;
+  import temp_pkg::*;
   import sgt_pkg::*;
   import sgt_tests_pkg::*;
 
   reg clk;
   reg rst_n;
+
+  wire [7:0] prdata_8bit;
 
   initial begin
     clk = 0;
@@ -43,8 +45,7 @@ module sgt_tb;
     .cooler_on (temp_if_inst.cooler_on)
   );
 
-  // Width adaptation: DUT prdata is 8-bit, APB UVC is 32-bit, for the assertion prdata_valid 
-  wire [7:0] prdata_8bit;
+  // Width adaptation: DUT prdata is 8-bit, APB UVC is 32-bit, for the assertion prdata_valid
   assign apb_if_inst.prdata = {24'b0, prdata_8bit};
 
   apb_interface_dut apb_if_inst (
