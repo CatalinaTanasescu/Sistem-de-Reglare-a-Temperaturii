@@ -5,7 +5,9 @@
 //              or cooler should be activated.
 module temp_controller #(
   // Parameters
-  parameter DATA_WIDTH = 8 // Data width for temperature and settings
+  parameter DATA_WIDTH = 8, // Data width for temperature and settings
+  parameter TEMP_MIN = 15,  // Minimum valid temperature
+  parameter TEMP_MAX = 30   // Maximum valid temperature
 ) (
   // System interface
   input clk,                              // Internal clock for sequential logic
@@ -24,7 +26,7 @@ module temp_controller #(
 
 // Internal wires for mapping control bits and status flags
 wire sys_enable, force_heat, force_cool;
-wire temp_low, temp_deadband, temp_high;
+wire temp_low, temp_high;
 wire [DATA_WIDTH-1:0] lower_threshold, upper_threshold;
 
 // Extracting individual bits from the control register
@@ -33,13 +35,14 @@ assign force_heat = control_reg[1]; // Bit 1: 1=Ignore sensor and force heater o
 assign force_cool = control_reg[2]; // Bit 2: 1=Ignore sensor and force cooler on
 
 // Calculating threshold limits based on the allowed tolerance
-assign lower_threshold = target_temp - temp_tolerance; // Lower bound (minimum accepted temp)
-assign upper_threshold = target_temp + temp_tolerance; // Upper bound (maximum accepted temp)
+assign lower_threshold = (temp_tolerance >= target_temp) ? TEMP_MIN : // Underflow check 
+                          target_temp - temp_tolerance; // Lower bound (minimum accepted temp)
+assign upper_threshold = ((target_temp + temp_tolerance) > TEMP_MAX) ? TEMP_MAX : // Overflow check
+                           target_temp + temp_tolerance; // Upper bound (maximum accepted temp)
 
 // Generating status flags by comparing the current temp against calculated limits
 assign temp_low = (temp_now < lower_threshold);
 assign temp_high = (temp_now > upper_threshold);
-assign temp_deadband = ~(temp_low || temp_high); // Temperature is in the ideal range
 
 // Sequential logic for the Heater
 always @(posedge clk or negedge rst_n)
